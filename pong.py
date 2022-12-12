@@ -17,6 +17,15 @@ class Game:
 		self.scoreboard.hideturtle()
 		self.scoreboard.goto(0, 260)
 		self.scoreboard.write("Player 1: {}  Player 2: {}".format(self.scores["Player_1"], self.scores["Player_2"]), align="center", font=("Courier", 24, "normal"))
+		self.ball = turtle.Turtle()
+		self.ball.speed(0)
+		self.ball.shape("circle")
+		self.ball.color("white")
+		self.ball.penup()
+		self.ball.goto(0, 0)
+		self.ball.dx = -.04
+		self.ball.dy = -.04
+
 	
 	def increment(self, player):
 		if player == 1:
@@ -82,65 +91,60 @@ class Player:
 		if y >= -240:
 			self.paddle.sety(y)
 
-# Ball
-ball = turtle.Turtle()
-ball.speed(0)
-ball.shape("circle")
-ball.color("white")
-ball.penup()
-ball.goto(0, 0)
-ball.dx = -.05
-ball.dy = -.05
-
 player_1 = Player("Player 1", "purple", "left")
 player_2 = Player("Player 2", "red", "right")
 game = Game()
 
-# Keyboard binding
+def new_game():
+	game = 0
+	game = Game()
+
 window.listen()
+	# Keyboard binding
 window.onkeypress(player_1.move_up, "w")
 window.onkeypress(player_1.move_down, "s")
 window.onkeypress(player_2.move_up, "Up")
 window.onkeypress(player_2.move_down, "Down")
+window.onkeypress(new_game, "n")
 
 # main loop
 while True:
 	window.update()
 
 	# Move the ball
-	ball.setx(ball.xcor() + ball.dx)
-	ball.sety(ball.ycor() + ball.dy)
+	game.ball.setx(game.ball.xcor() + game.ball.dx)
+	game.ball.sety(game.ball.ycor() + game.ball.dy)
 
 	# Border checking
-	if ball.ycor() > 290:
-		ball.sety(290)
-		ball.dy *= -1	
+	if game.ball.ycor() > 290:
+		game.ball.sety(290)
+		game.ball.dy *= -1	
 	
-	if ball.ycor() < -290:
-		ball.sety(-290)
-		ball.dy *= -1
+	if game.ball.ycor() < -290:
+		game.ball.sety(-290)
+		game.ball.dy *= -1
 	
-	if ball.xcor() > 390:
-		ball.goto(0, 0)
-		ball.dx *= -1
+	if game.ball.xcor() > 390:
+		game.ball.goto(0, 0)
+		game.ball.dx *= -1
 		game.increment(1)
 	
-	if ball.xcor() < -390:
-		ball.goto(0, 0)
-		ball.dx *= -1
+	if game.ball.xcor() < -390:
+		game.ball.goto(0, 0)
+		game.ball.dx *= -1
 		game.increment(2)
 
 	# Collisions
-	if (ball.xcor() > 330 and ball.xcor() < 340) and (ball.ycor() < player_2.paddle.ycor() + 50 and ball.ycor() > player_2.paddle.ycor() - 50):
-		ball.setx(330)
-		ball.dx *= -1
+	if (game.ball.xcor() > 330 and game.ball.xcor() < 340) and (game.ball.ycor() < player_2.paddle.ycor() + 50 and game.ball.ycor() > player_2.paddle.ycor() - 50):
+		game.ball.setx(330)
+		game.ball.dx *= -1
 
-	if (ball.xcor() > -340 and ball.xcor() < -330) and (ball.ycor() < player_1.paddle.ycor() + 50 and ball.ycor() > player_1.paddle.ycor() - 50):
-		ball.setx(-330)
-		ball.dx *= -1
+	if (game.ball.xcor() > -340 and game.ball.xcor() < -330) and (game.ball.ycor() < player_1.paddle.ycor() + 50 and game.ball.ycor() > player_1.paddle.ycor() - 50):
+		game.ball.setx(-330)
+		game.ball.dx *= -1
 	
 	if game.is_over:
-		ball.goto(0, 0)
-		ball.dx = 0
-		ball.dy = 0
+		game.ball.goto(0, 0)
+		game.ball.dx = 0
+		game.ball.dy = 0
 		game.game_over(player_1, player_2)
