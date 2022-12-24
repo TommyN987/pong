@@ -8,24 +8,60 @@ window.tracer(0)
 
 class Game:
 	def __init__(self):
+
 		self.is_over = False
 		self.scores = {"Player_1" : 0, "Player_2": 0}
+
+		self.top_border = turtle.Turtle()
+		self.top_border.speed(0)
+		self.top_border.shape("square")
+		self.top_border.shapesize(stretch_wid=1, stretch_len=40)
+		self.top_border.goto(0,310)
+		self.top_border.color("white")
+		self.top_border.penup()
+
+		self.bottom_border = turtle.Turtle()
+		self.bottom_border.speed(0)
+		self.bottom_border.shape("square")
+		self.bottom_border.shapesize(stretch_wid=1, stretch_len=40)
+		self.bottom_border.goto(0,-310)
+		self.bottom_border.color("white")
+		self.bottom_border.penup()
+
+		self.right_border = turtle.Turtle()
+		self.right_border.speed(0)
+		self.right_border.shape("square")
+		self.right_border.shapesize(stretch_wid=32, stretch_len=1)
+		self.right_border.goto(410,0)
+		self.right_border.color("white")
+		self.right_border.penup()
+
+		self.left_border = turtle.Turtle()
+		self.left_border.speed(0)
+		self.left_border.shape("square")
+		self.left_border.shapesize(stretch_wid=32, stretch_len=1)
+		self.left_border.goto(-410,0)
+		self.left_border.color("white")
+		self.left_border.penup()
+
 		self.scoreboard = turtle.Turtle()
 		self.scoreboard.speed(0)
 		self.scoreboard.color("white")
 		self.scoreboard.penup()
 		self.scoreboard.hideturtle()
-		self.scoreboard.goto(0, 260)
+		self.scoreboard.goto(0, 240)
 		self.scoreboard.write("Player 1: {}  Player 2: {}".format(self.scores["Player_1"], self.scores["Player_2"]), align="center", font=("Courier", 24, "normal"))
+
 		self.ball = turtle.Turtle()
 		self.ball.speed(0)
 		self.ball.shape("circle")
 		self.ball.color("white")
 		self.ball.penup()
 		self.ball.goto(0, 0)
-		self.ball.dx = -.04
-		self.ball.dy = -.04
+		self.ball.dx = -.05
+		self.ball.dy = -.05
 
+		self.gameover_pen = turtle.Turtle()
 	
 	def increment(self, player):
 		if player == 1:
@@ -55,13 +91,22 @@ class Game:
 			winner = player_2.name
 			color = player_2.color
 
-		gameover_pen = turtle.Turtle()
-		gameover_pen.speed(0)
-		gameover_pen.color(color)
-		gameover_pen.penup()
-		gameover_pen.hideturtle()
-		gameover_pen.goto(0, 160)
-		gameover_pen.write("{} wins!".format(winner), align="center", font=("Courier", 24, "normal"))
+		self.gameover_pen.speed(0)
+		self.gameover_pen.color(color)
+		self.gameover_pen.penup()
+		self.gameover_pen.hideturtle()
+		self.gameover_pen.goto(0, 160)
+		self.gameover_pen.write("{} wins!".format(winner), align="center", font=("Courier", 24, "normal"))
+	
+	def new_game(self):
+		if (self.is_over == True):
+			self.scores["Player_1"] = 0
+			self.scores["Player_2"] = 0
+			self.update_scoreboard()
+			self.gameover_pen.clear()
+			self.is_over = False
+			self.ball.dx = -.05
+			self.ball.dy = -.05
 
 class Player:
 	def __init__(self, name, color, side):
@@ -91,13 +136,9 @@ class Player:
 		if y >= -240:
 			self.paddle.sety(y)
 
-player_1 = Player("Player 1", "purple", "left")
-player_2 = Player("Player 2", "red", "right")
+player_1 = Player("Player 1", "yellow", "left")
+player_2 = Player("Player 2", "green", "right")
 game = Game()
-
-def new_game():
-	game = 0
-	game = Game()
 
 window.listen()
 	# Keyboard binding
@@ -105,7 +146,7 @@ window.onkeypress(player_1.move_up, "w")
 window.onkeypress(player_1.move_down, "s")
 window.onkeypress(player_2.move_up, "Up")
 window.onkeypress(player_2.move_down, "Down")
-window.onkeypress(new_game, "n")
+window.onkeypress(game.new_game, "n")
 
 # main loop
 while True:
